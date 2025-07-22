@@ -19,7 +19,7 @@ FROM alpine:latest
 
 RUN apk add --no-cache apache2
 RUN rm -r /var/www/localhost
-COPY --from=builder /var/www/html /var/www/localhost
+COPY --from=builder /var/www/html /var/www/localhost/htdocs
 EXPOSE 80
 
 CMD ["httpd", "-D" ,"FOREGROUND"]
