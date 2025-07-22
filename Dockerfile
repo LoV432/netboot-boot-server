@@ -30,9 +30,23 @@ FROM alpine:latest
 
 # /etc/netbootxyz/certs
 
-RUN apk add --no-cache apache2
+RUN apk add --no-cache apache2 supervisor tftp-hpa
 RUN rm -r /var/www/localhost
 COPY --from=builder /var/www/html /var/www/localhost/htdocs
-EXPOSE 80
 
-CMD ["httpd", "-D" ,"FOREGROUND"]
+COPY <<EOF /etc/supervisord.conf
+[supervisord]
+nodaemon=true
+
+[program:httpd]
+command=/usr/sbin/httpd -D FOREGROUND
+autorestart=true
+
+[program:tftpd]
+command=/usr/sbin/in.tftpd -Lvvv --foreground --secure /var/www/localhost/htdocs
+autorestart=true
+EOF
+
+EXPOSE 80 69/udp
+
+CMD ["/usr/bin/supervisord", "-c", "/etc/supervisord.conf"]
