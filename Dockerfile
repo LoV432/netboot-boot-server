@@ -1,12 +1,17 @@
 FROM debian:bookworm AS builder
-
+ARG RELEASE
+ENV RELEASE=${RELEASE}
 
 RUN apt update && apt install -y \
     ansible \
-    git
+    curl \
+    tar
 
 
-RUN git clone https://github.com/netbootxyz/netboot.xyz.git /opt/netboot.xyz
+WORKDIR /opt
+RUN curl -sSL "https://github.com/netbootxyz/netboot.xyz/archive/refs/tags/${RELEASE}.tar.gz" -o release.tar.gz && \
+    tar -xzf release.tar.gz && \
+    mv "netboot.xyz-${RELEASE}" netboot.xyz
 
 WORKDIR /opt/netboot.xyz
 
