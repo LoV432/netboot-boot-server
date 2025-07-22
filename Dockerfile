@@ -15,11 +15,11 @@ RUN ansible-playbook -i inventory site.yml
 
 FROM alpine:latest
 
-COPY --from=builder /var/www/html /var/www/html
 # /etc/netbootxyz/certs
 
 RUN apk add --no-cache apache2
-
+RUN rm -r /var/www/localhost
+COPY --from=builder /var/www/html /var/www/localhost
 EXPOSE 80
 
 CMD ["httpd", "-D" ,"FOREGROUND"]
