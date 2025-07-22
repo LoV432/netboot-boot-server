@@ -30,9 +30,20 @@ FROM alpine:latest
 
 # /etc/netbootxyz/certs
 
-RUN apk add --no-cache apache2 supervisor dnsmasq
+RUN apk add --no-cache apache2 supervisor dnsmasq bash
 RUN rm -r /var/www/localhost
 COPY --from=builder /var/www/html /var/www/localhost/htdocs
+
+COPY <<EOF /usr/local/bin/dnsmasq-wrapper.sh
+#!/bin/bash
+
+echo "[dnsmasq] Starting TFTP server on port 69"
+echo "[dnsmasq] TFTP root: /var/www/localhost/htdocs"
+echo "[dnsmasq] TFTP security: enabled"
+echo "[dnsmasq] Logging: enabled (dhcp and queries)"
+
+exec /usr/sbin/dnsmasq --port=0 --keep-in-foreground --enable-tftp --tftp-secure --tftp-root=/var/www/localhost/htdocs --log-facility=- --log-dhcp --log-queries "$@"
+EOF
 
 COPY <<EOF /etc/supervisord.conf
 [supervisord]
@@ -43,7 +54,10 @@ command=/usr/sbin/httpd -D FOREGROUND
 autorestart=true
 
 [program:tftpd]
-command=/usr/sbin/dnsmasq --port=0 --keep-in-foreground --enable-tftp --tftp-secure --tftp-root=/var/www/localhost/htdocs --log-facility=- --log-dhcp --log-queries
+command=/usr/local/bin/dnsmasq-wrapper.sh
+redirect_stderr=true
+stdout_logfile=/dev/fd/1
+stdout_logfile_maxbytes=0
 EOF
 
 EXPOSE 80 69/udp
