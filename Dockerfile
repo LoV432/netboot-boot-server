@@ -30,7 +30,7 @@ FROM alpine:latest
 
 # /etc/netbootxyz/certs
 
-RUN apk add --no-cache apache2 supervisor tftp-hpa
+RUN apk add --no-cache apache2 supervisor dnsmasq
 RUN rm -r /var/www/localhost
 COPY --from=builder /var/www/html /var/www/localhost/htdocs
 
@@ -43,8 +43,7 @@ command=/usr/sbin/httpd -D FOREGROUND
 autorestart=true
 
 [program:tftpd]
-command=/usr/sbin/in.tftpd -Lvvv --foreground --secure /var/www/localhost/htdocs
-autorestart=true
+command=/usr/sbin/dnsmasq --port=0 --keep-in-foreground --enable-tftp --tftp-secure --tftp-root=/var/www/localhost/htdocs --log-facility=- --log-dhcp --log-queries
 EOF
 
 EXPOSE 80 69/udp
