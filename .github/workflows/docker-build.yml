@@ -19,7 +19,7 @@ jobs:
       - name: Get latest GitHub release
         id: get_release
         run: |
-          LATEST_RELEASE=$(curl -s -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" https://api.github.com/repos/lov42/netboot-boot-server/releases/latest | jq -r .tag_name)
+          LATEST_RELEASE=$(curl -s -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" https://api.github.com/repos/netbootxyz/netboot.xyz/releases/latest | jq -r .tag_name)
           echo "Latest release: $LATEST_RELEASE"
           echo "release_tag=$LATEST_RELEASE" >> $GITHUB_OUTPUT
 
