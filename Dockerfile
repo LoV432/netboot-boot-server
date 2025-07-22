@@ -30,7 +30,7 @@ FROM alpine:latest
 
 # /etc/netbootxyz/certs
 
-RUN apk add --no-cache apache2 supervisor dnsmasq bash
+RUN apk add --no-cache apache2 supervisor dnsmasq bash shadow
 RUN rm -r /var/www/localhost
 COPY --from=builder /var/www/html /var/www/localhost/htdocs
 RUN mv /var/www/localhost/htdocs/ipxe/* /var/www/localhost/htdocs/
