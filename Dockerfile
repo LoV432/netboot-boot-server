@@ -45,6 +45,8 @@ echo "[dnsmasq] Logging: enabled (dhcp and queries)"
 exec /usr/sbin/dnsmasq --port=0 --keep-in-foreground --enable-tftp --tftp-secure --tftp-root=/var/www/localhost/htdocs --log-facility=- --log-dhcp --log-queries "$@"
 EOF
 
+RUN chmod +x /usr/local/bin/dnsmasq-wrapper.sh
+
 COPY <<EOF /etc/supervisord.conf
 [supervisord]
 nodaemon=true
