@@ -2,6 +2,9 @@ FROM debian:bookworm AS builder
 ARG RELEASE
 ENV RELEASE=${RELEASE}
 
+ARG BOOT_DOMAIN=boot-netboot.monib.xyz
+ENV BOOT_DOMAIN=${BOOT_DOMAIN}
+
 RUN apt update && apt install -y \
     ansible \
     curl \
@@ -14,6 +17,8 @@ RUN curl -sSL "https://github.com/netbootxyz/netboot.xyz/archive/refs/tags/${REL
     mv "netboot.xyz-${RELEASE}" netboot.xyz
 
 WORKDIR /opt/netboot.xyz
+RUN echo "boot_domain: ${BOOT_DOMAIN}" >> user_overrides.yml
+RUN sed -i "s/generate_menus: true/generate_menus: false/" user_overrides.yml
 
 RUN ansible-playbook -i inventory site.yml
 
