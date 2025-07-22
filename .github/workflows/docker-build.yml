@@ -20,7 +20,7 @@ jobs:
         id: check_docker
         run: |
           DOCKER_ACCESS_TOKEN=$(curl -s -X POST -H "Content-Type: application/json" -d '{"identifier": "${{ secrets.DOCKERHUB_USERNAME }}", "secret": "${{ secrets.DOCKERHUB_TOKEN }}"}' https://hub.docker.com/v2/auth/token | jq -r .access_token)
-          EXISTS=$(curl -s -o /dev/null -w "%{http_code}" -H "Authorization: Bearer $DOCKER_ACCESS_TOKEN" https://hub.docker.com/v2/namespaces/docker/repositories/lov432/netboot-boot-server/tags/${{ steps.get_release.outputs.release_tag }})
+          EXISTS=$(curl -s -o /dev/null -w "%{http_code}" -H "Authorization: Bearer $DOCKER_ACCESS_TOKEN" https://hub.docker.com/v2/repositories/lov432/netboot-boot-server/tags/${{ steps.get_release.outputs.release_tag }})
 
           echo "Docker image check returned: $EXISTS"
           if [ "$EXISTS" = "200" ]; then
