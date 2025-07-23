@@ -30,42 +30,21 @@ FROM alpine:latest
 
 # /etc/netbootxyz/certs
 
-RUN apk add --no-cache apache2 supervisor dnsmasq bash shadow
+RUN apk add --no-cache apache2 supervisor dnsmasq shadow
+
 RUN rm -r /var/www/localhost
 COPY --from=builder /var/www/html /var/www/localhost/htdocs
 RUN cp /var/www/localhost/htdocs/ipxe/* /var/www/localhost/htdocs/
+
 RUN find /var/www/localhost/htdocs/  -type f -name "*.ipxe" -exec sed -i 's/boot.netboot.xyz/${BOOT_DOMAIN}/g' {} +
+
 RUN useradd -r -s /sbin/nologin nbxyz
 RUN chown -R nbxyz:nbxyz /var/www/localhost/htdocs
 
-COPY <<EOF /usr/local/bin/dnsmasq-wrapper.sh
-#!/bin/bash
-
-echo "[dnsmasq] Starting TFTP server on port 69"
-echo "[dnsmasq] TFTP root: /var/www/localhost/htdocs"
-echo "[dnsmasq] TFTP security: enabled"
-echo "[dnsmasq] Logging: enabled (dhcp and queries)"
-
-exec /usr/sbin/dnsmasq --port=0 --keep-in-foreground --enable-tftp --tftp-secure --user=nbxyz --tftp-root=/var/www/localhost/htdocs --log-facility=- --log-dhcp --log-queries "$@"
-EOF
-
+COPY dnsmasq-wrapper.sh /usr/local/bin/dnsmasq-wrapper.sh
 RUN chmod +x /usr/local/bin/dnsmasq-wrapper.sh
 
-COPY <<EOF /etc/supervisord.conf
-[supervisord]
-user=root
-nodaemon=true
-
-[program:httpd]
-command=/usr/sbin/httpd -D FOREGROUND
-autorestart=true
-
-[program:tftpd]
-command=/usr/local/bin/dnsmasq-wrapper.sh
-redirect_stderr=true
-stdout_logfile=/dev/fd/1
-stdout_logfile_maxbytes=0
-EOF
+COPY supervisord.conf /etc/supervisord.conf
 
 EXPOSE 80 69/udp
 
