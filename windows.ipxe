@@ -4,7 +4,7 @@
 # https://www.microsoft.com
 
 set win_base_url ${live_endpoint}/winpe
-set winpe_arch x64
+set win_arch x64
 set win_image Win11_23H2_English_x64v2
 goto ${menu} ||
 
@@ -15,6 +15,7 @@ menu ${os}
 item --gap Installers
 item win_install ${space} Load ${os} Installer...
 item --gap Options:
+item image_set ${space} Image [ ${win_image} ]
 item arch_set ${space} Architecture [ ${win_arch} ]
 item url_set ${space} Base URL [ ${win_base_url} ]
 choose win_version || goto windows_exit
@@ -26,8 +27,8 @@ item Win11_23H2_English_x64v2 Win11_23H2_English_x64v2
 item Win10_22H2_English_x64v1 Win10_22H2_English_x64v1
 choose win_image && goto windows
 
-:pe_arch_set
-iseq ${winpe_arch} x64 && set winpe_arch x86 || set winpe_arch x64
+:arch_set
+iseq ${win_arch} x64 && set win_arch x86 || set win_arch x64
 goto windows
 
 :url_set
@@ -42,6 +43,9 @@ echo ${win_base_url}/${win_arch}/bootmgr.efi
 echo ${win_base_url}/${win_arch}/boot/bcd
 echo ${win_base_url}/${win_arch}/boot/boot.sdi
 echo ${win_base_url}/${win_arch}/sources/boot.wim
+echo ${win_base_url}/configs/${win_image}/install.bat
+echo ${win_base_url}/configs/configure.bat
+echo ${win_base_url}/configs/winpeshl.ini
 echo
 prompt Press any key to return to Windows Menu...
 goto windows
