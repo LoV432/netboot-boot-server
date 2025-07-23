@@ -22,6 +22,7 @@ RUN curl -sSL "https://github.com/netbootxyz/netboot.xyz/archive/refs/tags/${REL
 WORKDIR /opt/netboot.xyz
 RUN echo "boot_domain: ${BOOT_DOMAIN}" >> user_overrides.yml
 RUN echo "live_endpoint: ${LIVE_ENDPOINT}" >> user_overrides.yml
+RUN echo "bootloader_https_enabled: false" >> user_overrides.yml
 
 RUN ansible-playbook -i inventory site.yml
 
