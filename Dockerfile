@@ -2,10 +2,10 @@ FROM debian:bookworm AS builder
 ARG RELEASE
 ENV RELEASE=${RELEASE}
 
-ARG BOOT_DOMAIN=netboot-boot.monib.xyz
+ARG BOOT_DOMAIN=netboot-boot.monib.xyz:8001
 ENV BOOT_DOMAIN=${BOOT_DOMAIN}
 
-ARG LIVE_ENDPOINT=http://netboot-assets.monib.xyz
+ARG LIVE_ENDPOINT=http://netboot-assets.monib.xyz:8001
 ENV LIVE_ENDPOINT=${LIVE_ENDPOINT}
 
 RUN apt update && apt install -y \
