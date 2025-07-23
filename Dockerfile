@@ -37,7 +37,8 @@ RUN rm -r /var/www/localhost
 COPY --from=builder /var/www/html /var/www/localhost/htdocs
 RUN cp /var/www/localhost/htdocs/ipxe/* /var/www/localhost/htdocs/
 
-RUN find /var/www/localhost/htdocs/  -type f -name "*.ipxe" -exec sed -i 's/boot.netboot.xyz/${BOOT_DOMAIN}/g' {} +
+RUN find /var/www/localhost/htdocs/ -type f -name "*.ipxe" -exec sed -i 's/boot.netboot.xyz/${boot_domain}/g' {} +
+RUN find /var/www/localhost/htdocs/ -type f -name "*.ipxe" -exec sed -i 's/https://${boot_domain}/http://${boot_domain}/g' {} +
 
 COPY windows.ipxe /var/www/localhost/htdocs/windows.ipxe
 
