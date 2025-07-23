@@ -5,7 +5,7 @@ ENV RELEASE=${RELEASE}
 ARG BOOT_DOMAIN=netboot-boot.monib.xyz
 ENV BOOT_DOMAIN=${BOOT_DOMAIN}
 
-ARG LIVE_ENDPOINT=https://netboot-assets.monib.xyz/
+ARG LIVE_ENDPOINT=http://netboot-assets.monib.xyz
 ENV LIVE_ENDPOINT=${LIVE_ENDPOINT}
 
 RUN apt update && apt install -y \
@@ -33,7 +33,8 @@ FROM alpine:latest
 RUN apk add --no-cache apache2 supervisor dnsmasq bash shadow
 RUN rm -r /var/www/localhost
 COPY --from=builder /var/www/html /var/www/localhost/htdocs
-RUN mv /var/www/localhost/htdocs/ipxe/* /var/www/localhost/htdocs/
+RUN cp /var/www/localhost/htdocs/ipxe/* /var/www/localhost/htdocs/
+RUN find /var/www/localhost/htdocs/  -type f -name "*.ipxe" -exec sed -i 's/boot.netboot.xyz/${BOOT_DOMAIN}/g' {} +
 RUN useradd -r -s /sbin/nologin nbxyz
 RUN chown -R nbxyz:nbxyz /var/www/localhost/htdocs
 
