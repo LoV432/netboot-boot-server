@@ -23,6 +23,7 @@ WORKDIR /opt/netboot.xyz
 RUN echo "boot_domain: ${BOOT_DOMAIN}" >> user_overrides.yml
 RUN echo "live_endpoint: ${LIVE_ENDPOINT}" >> user_overrides.yml
 RUN echo "bootloader_https_enabled: false" >> user_overrides.yml
+RUN sed -i 's/ntp {{ time_server }} ||//' roles/netbootxyz/templates/menu/menu.ipxe.j2
 
 RUN ansible-playbook -i inventory site.yml
 
